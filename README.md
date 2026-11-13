@@ -54,7 +54,7 @@ For experiments, replace the sample paths with your own images and retrieval poo
 ```bash
 python solve.py --img_path samples/input --prompt "a photo of a close-up face of a cat" \
   --db_img_dir samples/retrieval --task sr_avgpool --deg_scale 16 \
-  --measurement_noise 0.05 --efficient_memory --workdir results/sr
+  --measurement_noise 0.05 --efficient_memory
 ```
 
 ### Motion deblurring
@@ -64,7 +64,7 @@ Motion blur with an 81x81 kernel and measurement noise of 0.05.
 ```bash
 python solve.py --img_path samples/input --prompt "a photo of a close-up face of a cat" \
   --db_img_dir samples/retrieval --task deblur_motion --deg_scale 81 \
-  --measurement_noise 0.05 --efficient_memory --workdir results/deblur
+  --measurement_noise 0.05 --efficient_memory
 ```
 
 ### Denoising
@@ -74,7 +74,7 @@ Additive Gaussian noise with a standard deviation of 0.7.
 ```bash
 python solve.py --img_path samples/input --prompt "a photo of a close-up face of a cat" \
   --db_img_dir samples/retrieval --task denoising --deg_scale 0.7 \
-  --efficient_memory --workdir results/denoise
+  --efficient_memory
 ```
 
 ### Block compressive sensing
@@ -84,7 +84,7 @@ python solve.py --img_path samples/input --prompt "a photo of a close-up face of
 ```bash
 python solve.py --img_path samples/input --prompt "a photo of a close-up face of a cat" \
   --db_img_dir samples/retrieval --task cs_blockbased --deg_scale 0.1 \
-  --measurement_noise 0.05 --efficient_memory --workdir results/cs
+  --measurement_noise 0.05 --efficient_memory
 ```
 
 All examples use 10 reconstruction steps, 10 inversion steps, image size 768, and CFG 2.
@@ -114,7 +114,7 @@ Use `--img_path` for the input images and `--db_img_dir` for the clean retrieval
 <summary>Outputs and retrieval DB</summary>
 
 ```text
-results/sr/sr_avgpool_16.0/
+results/sr_avgpool_16.0/
   input/0000.png
   recon/0000.png
   label/0000.png
