@@ -4,7 +4,7 @@ Implementation of measurement-DINO retrieval, RA-DGI inversion, and FlowDPS reco
 
 ## Setup
 
-Use Python 3.10–3.12 and a CUDA GPU. The original environment used PyTorch 2.7.0, torchvision 0.22.0, Diffusers 0.30.1, and Transformers 4.57.6. This release keeps those model-library versions. Full SD3 inference has not been validated on the release preparation machine; see [VALIDATION.md](VALIDATION.md).
+Use Python 3.10–3.12 and a CUDA GPU. The original environment used PyTorch 2.7.0, torchvision 0.22.0, Diffusers 0.30.1, and Transformers 4.57.6. This release keeps those model-library versions.
 
 ```bash
 conda create -n ra-dgi python=3.10 -y
