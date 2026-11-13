@@ -64,7 +64,15 @@ def make_db(args, db_images, transform, operator, device, dino):
         "selected": selected,
     }
     key = hashlib.sha256(json.dumps(manifest, sort_keys=True).encode()).hexdigest()
-    cache = args.db_dir / key
+    # Features depend on the degradation applied to the reference images (paper Sec. 3.2).
+    # Keep settings readable; the complete manifest hash prevents accidental reuse.
+    cache = (
+        args.db_dir
+        / "measurement_dino"
+        / f"{args.task}_{args.deg_scale:g}"
+        / f"size_{args.img_size}_noise_{args.measurement_noise:g}_db_{len(selected)}_seed_{args.seed}"
+        / key
+    )
     index_path, meta_path = cache / "index.faiss", cache / "meta.json"
     if index_path.is_file() and meta_path.is_file():
         try:
@@ -76,6 +84,7 @@ def make_db(args, db_images, transform, operator, device, dino):
                     return index, [root / item["path"] for item in selected]
         except (ValueError, KeyError, RuntimeError, OSError):
             pass
+    print(f"Building retrieval cache: {cache}")
     features = []
     with isolated_seed(args.seed):
         for item in tqdm(selected, desc="Building retrieval DB"):
