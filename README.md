@@ -6,6 +6,8 @@ Implementation of measurement-DINO retrieval, RA-DGI inversion, and FlowDPS reco
 
 Use Python 3.10–3.12 and a CUDA GPU. The original environment used PyTorch 2.7.0, torchvision 0.22.0, Diffusers 0.30.1, and Transformers 4.57.6. This release keeps those model-library versions.
 
+All four tasks were verified on an NVIDIA RTX 5090 with PyTorch 2.7.0+cu128, one input image, three retrieval images, image size 768, `--NFE 10`, `--NFE_inv 10`, and `--efficient_memory`. GPU cache construction, reuse, and separation by degradation settings were also checked. This execution check does not reproduce full-dataset paper metrics.
+
 ```bash
 conda create -n ra-dgi python=3.10 -y
 conda activate ra-dgi
