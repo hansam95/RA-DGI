@@ -46,9 +46,11 @@ def make_db(args, db_images, transform, operator, device, dino):
     ]
     selected = random.Random(args.seed).sample(candidates, min(args.db_size, len(candidates)))
     manifest = {
-        "format": 1,
+        "format": 2,
         "feature": "measurement_dino_flatten_l2",
         "model": DINO_MODEL,
+        "feature_device": str(dino.device),
+        "feature_dtype": str(dino.model.dtype),
         "transformers": version("transformers"),
         "torchvision": version("torchvision"),
         "img_size": args.img_size,

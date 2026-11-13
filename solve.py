@@ -99,7 +99,7 @@ def run(args, images, prompts, db_images, output):
     with isolated_seed(args.seed):
         operator = get_degradation(args.task, args.img_size, args.deg_scale, device)
     dino = pipeline(
-        task="image-feature-extraction", model=DINO_MODEL, dtype=torch.bfloat16, device=-1
+        task="image-feature-extraction", model=DINO_MODEL, dtype=torch.bfloat16, device=device
     )
     index, paths = make_db(args, db_images, transform, operator, device, dino)
     for folder in ("input", "recon", "label", "retrieval"):

@@ -19,7 +19,7 @@ Request access to both model repositories and accept their terms using your Hugg
 - [Stable Diffusion 3 Medium](https://huggingface.co/stabilityai/stable-diffusion-3-medium-diffusers)
 - [DINOv3 ViT-S/16](https://huggingface.co/facebook/dinov3-vits16-pretrain-lvd1689m)
 
-Then authenticate with `huggingface-cli login` (or set `HF_TOKEN`). Weights download on first use. DINO features are extracted on CPU in bfloat16, as in the original code. SD3 runs on CUDA in float16. `--efficient_memory` releases the text encoders after precomputing prompt embeddings; no fixed VRAM capacity is claimed.
+Then authenticate with `huggingface-cli login` (or set `HF_TOKEN`). Weights download on first use. DINO features are extracted on CUDA in bfloat16, matching the original code's GPU selection when CUDA is available. SD3 runs on CUDA in float16. `--efficient_memory` releases the text encoders after precomputing prompt embeddings; no fixed VRAM capacity is claimed.
 
 ## Prepare images
 
@@ -111,7 +111,7 @@ results/sr/sr_avgpool_16.0/
 
 `input` is the original operator's backprojection of the noisy measurement; `label` is the preprocessed clean image. PNGs use the original `save_image(normalize=True)` convention. `config.json` maps inputs to prompts; `retrieval.json` records the selected reference for each result. Choose a new `--workdir` for each run: existing nonempty task directories are rejected to avoid mixing results.
 
-The retrieval database uses the original flattened DINO pipeline output, without feature normalization, and exact FAISS L2 nearest-neighbor search. Features are computed from degraded DB images using the same operator as the query. Cache metadata records image content hashes, selected relative paths, task, image size, noise, seed, feature-library versions, and the actual sampled blur kernel or CS basis. Mismatched or incomplete caches are rebuilt under a new settings key. Metadata uses relative paths so the image directory can be relocated.
+The retrieval database uses the original flattened DINO pipeline output, without feature normalization, and exact FAISS L2 nearest-neighbor search. Features are computed from degraded DB images using the same operator as the query. Cache metadata records image content hashes, selected relative paths, task, image size, noise, seed, feature-library versions, DINO device and dtype, and the actual sampled blur kernel or CS basis. Mismatched or incomplete caches are rebuilt under a new settings key. Metadata uses relative paths so the image directory can be relocated.
 
 DB construction preserves the inference random state. Measurements and sampling use a separate seed per input index, and each image resets the inversion scheduler shift before reconstruction sets it to 4. These fixes remove cache-hit and previous-image state dependencies; full-run PNGs are not promised to be bit-identical to historical experiments. The original RA-DGI/FlowDPS update equations, original motion backprojection (identity), DINO conversion and text-tokenization logic are retained.
 
