@@ -17,12 +17,12 @@ from diffusers import FlowMatchEulerDiscreteScheduler
 from functions.degradation import get_degradation, operator_fingerprint
 from PIL import Image
 from retrieval import extract_feature, load_image, make_db, search_db
-from sd3_sampler import DGISolver
+from sd3_sampler import RADGISolver
 from torchvision import transforms
 from util import isolated_seed, process_text, set_seed, validate_inputs
 
 
-class TinySolver(DGISolver):
+class TinySolver(RADGISolver):
     """Differentiable identity VAE and a deterministic toy vector field."""
 
     def __init__(self):
@@ -52,7 +52,7 @@ class TinyDino:
         return [[array.mean(axis=(0, 1)).tolist(), array.std(axis=(0, 1)).tolist()]]
 
 
-class DGIRegressionTests(unittest.TestCase):
+class RADGIRegressionTests(unittest.TestCase):
     def setUp(self):
         self.temp = tempfile.TemporaryDirectory()
         self.addCleanup(self.temp.cleanup)
@@ -89,7 +89,7 @@ class DGIRegressionTests(unittest.TestCase):
         images, prompts, _, _ = validate_inputs(self.args)
         self.assertEqual([p.name for p in images], ["a.png", "b.JPG"])
         self.assertEqual(prompts, ["a high quality photo of cat", "a high quality photo of dog"])
-        self.assertEqual((self.args.NFE, self.args.NFE_inv, self.args.step_size), (20, 10, 15))
+        self.assertEqual((self.args.NFE, self.args.NFE_inv, self.args.step_size), (10, 10, 15))
         self.prompts.write_text("\nplain sentence\n", encoding="utf-8")
         self.assertEqual(
             process_text(prompt_file=self.prompts),
@@ -257,6 +257,7 @@ class DGIRegressionTests(unittest.TestCase):
         Image.new("RGB", (40, 36), (5, 6, 7)).save(self.images / "a.png")
         make_db(self.args, db_images, self.transform, operator, "cpu", dino)
         self.assertEqual(len(list(self.args.db_dir.iterdir())), 3)
+
 
     def test_toy_end_to_end_retrieval_inversion_reconstruction(self):
         _, _, db_images, _ = validate_inputs(self.args)

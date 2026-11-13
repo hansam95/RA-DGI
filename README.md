@@ -1,14 +1,14 @@
 # RA-DGI
 
-Implementation of measurement-DINO retrieval, dual-guidance inversion (DGI), and FlowDPS reconstruction with Stable Diffusion 3 Medium.
+Implementation of measurement-DINO retrieval, RA-DGI inversion, and FlowDPS reconstruction with Stable Diffusion 3 Medium.
 
 ## Setup
 
 Use Python 3.10–3.12 and a CUDA GPU. The original environment used PyTorch 2.7.0, torchvision 0.22.0, Diffusers 0.30.1, and Transformers 4.57.6. This release keeps those model-library versions. Full SD3 inference has not been validated on the release preparation machine; see [VALIDATION.md](VALIDATION.md).
 
 ```bash
-conda create -n dgi python=3.10 -y
-conda activate dgi
+conda create -n ra-dgi python=3.10 -y
+conda activate ra-dgi
 # Example for CUDA 12.8; use the PyTorch index appropriate for your system.
 pip install torch==2.7.0 torchvision==0.22.0 --index-url https://download.pytorch.org/whl/cu128
 pip install -r requirements.txt
@@ -43,9 +43,9 @@ Use `--prompt "a photo of a cat"` to share a literal prompt across all inputs, o
 
 The prompt-file parser preserves the original DAPE/DIV2K behavior: take the text after the last `: `, strip whitespace, and prepend `a high quality photo of `. An empty line becomes `a high quality photo`. Thus `0000: a cat` becomes `a high quality photo of a cat`; an already complete sentence also receives that prefix. Use `--prompt` when you want the exact text without this conversion. There must be at least one line per selected input; trailing lines are ignored when processing a subset with `--num_samples`.
 
-## Run DGI
+## Run RA-DGI
 
-Run commands from this repository directory. Paths may also be absolute, so existing datasets can stay in their current location. All examples include retrieval, DGI inversion with DPS measurement guidance and prior guidance, and FlowDPS reconstruction.
+Run commands from this repository directory. Paths may also be absolute, so existing datasets can stay in their current location. All examples include retrieval, RA-DGI inversion with DPS measurement guidance and prior guidance, and FlowDPS reconstruction.
 
 ### Super-resolution (16x average pooling)
 
@@ -84,7 +84,7 @@ The examples use Bash line continuations. In PowerShell, put the command on a si
 | Argument | Default | Meaning |
 | --- | --- | --- |
 | `--img_size` | 768 | Square image size; multiple of 16, or 32 for block CS |
-| `--NFE` | 20 | Reconstruction steps |
+| `--NFE` | 10 | Reconstruction steps |
 | `--NFE_inv` | 10 | Inversion steps |
 | `--cfg_scale` | 2.0 | Reconstruction CFG; inversion CFG remains 1 |
 | `--step_size` / `--step_size_inv` | 15.0 / 15.0 | Measurement guidance step sizes; three inner updates |
@@ -113,12 +113,12 @@ results/sr/sr_avgpool_16.0/
 
 The retrieval database uses the original flattened DINO pipeline output, without feature normalization, and exact FAISS L2 nearest-neighbor search. Features are computed from degraded DB images using the same operator as the query. Cache metadata records image content hashes, selected relative paths, task, image size, noise, seed, feature-library versions, and the actual sampled blur kernel or CS basis. Mismatched or incomplete caches are rebuilt under a new settings key. Metadata uses relative paths so the image directory can be relocated.
 
-DB construction preserves the inference random state. Measurements and sampling use a separate seed per input index, and each image resets the inversion scheduler shift before reconstruction sets it to 4. These fixes remove cache-hit and previous-image state dependencies; full-run PNGs are not promised to be bit-identical to historical experiments. The original DGI/FlowDPS update equations, original motion backprojection (identity), DINO conversion and text-tokenization logic are retained.
+DB construction preserves the inference random state. Measurements and sampling use a separate seed per input index, and each image resets the inversion scheduler shift before reconstruction sets it to 4. These fixes remove cache-hit and previous-image state dependencies; full-run PNGs are not promised to be bit-identical to historical experiments. The original RA-DGI/FlowDPS update equations, original motion backprojection (identity), DINO conversion and text-tokenization logic are retained.
 
 ## Code and acknowledgements
 
 - `solve.py`: input validation, model setup and inference.
-- `sd3_sampler.py`: SD3 encoding, DGI inversion and FlowDPS sampling.
+- `sd3_sampler.py`: SD3 encoding, RA-DGI inversion and FlowDPS sampling.
 - `retrieval.py`: measurement-DINO features, cache and L2 retrieval.
 - `functions/`: the four measurement operators and motion kernel.
 - `util.py`: input helpers and random-state handling.

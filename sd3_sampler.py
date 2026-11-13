@@ -97,7 +97,7 @@ class StableDiffusion3Base:
         return v
 
 
-class DGISolver(StableDiffusion3Base):
+class RADGISolver(StableDiffusion3Base):
     """The proposed method only; inference uses one image at a time."""
 
     def data_consistency(self, z0t, operator, measurement, task, stepsize=15.0):
@@ -121,7 +121,7 @@ class DGISolver(StableDiffusion3Base):
         NFE_inv=10,
         step_size_inv=15.0,
     ):
-        # The original DGI path uses inversion CFG=1, independently of sampling CFG.
+        # The original RA-DGI path uses inversion CFG=1, independently of sampling CFG.
         prompt, pooled = prompt_emb
         with torch.no_grad():
             z = self.encode(retrieved_img.to(device=self.device, dtype=self.dtype))
@@ -133,7 +133,7 @@ class DGISolver(StableDiffusion3Base):
             0
         )
         sigmas = timesteps / self.scheduler.config.num_train_timesteps
-        for i, t in enumerate(tqdm(timesteps[:-1], desc="DGI inversion")):
+        for i, t in enumerate(tqdm(timesteps[:-1], desc="RA-DGI inversion")):
             with torch.no_grad():
                 pred_v = self.predict_vector(z, t.expand(z.shape[0]), prompt, pooled)
             sigma, sigma_next = sigmas[i], sigmas[i + 1]
@@ -153,7 +153,7 @@ class DGISolver(StableDiffusion3Base):
         retrieved_img,
         prompt_emb,
         null_emb,
-        NFE=20,
+        NFE=10,
         NFE_inv=10,
         cfg_scale=2.0,
         step_size=15.0,

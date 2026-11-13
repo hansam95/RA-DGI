@@ -1,4 +1,4 @@
-"""Four original DGI measurement operators."""
+"""Four original RA-DGI measurement operators."""
 
 import hashlib
 

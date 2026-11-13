@@ -1,4 +1,4 @@
-"""Run measurement-DINO retrieval, DGI inversion and FlowDPS reconstruction."""
+"""Run measurement-DINO retrieval, RA-DGI inversion and FlowDPS reconstruction."""
 
 import argparse
 import json
@@ -40,8 +40,8 @@ def build_parser():
     parser.add_argument("--img_size", type=int, default=768)
     parser.add_argument("--num_samples", type=int, default=-1)
     parser.add_argument("--db_size", type=int, default=1000)
-    parser.add_argument("--NFE", type=int, default=20, help="Reconstruction steps")
-    parser.add_argument("--NFE_inv", type=int, default=10, help="DGI inversion steps")
+    parser.add_argument("--NFE", type=int, default=10, help="Reconstruction steps")
+    parser.add_argument("--NFE_inv", type=int, default=10, help="RA-DGI inversion steps")
     parser.add_argument("--cfg_scale", type=float, default=2.0)
     parser.add_argument("--step_size", type=float, default=15.0)
     parser.add_argument("--step_size_inv", type=float, default=15.0)
@@ -59,7 +59,7 @@ def run(args, images, prompts, db_images, output):
     import torch
     from functions.degradation import get_degradation
     from retrieval import DINO_MODEL, load_image, make_db, search_db
-    from sd3_sampler import DGISolver
+    from sd3_sampler import RADGISolver
     from torchvision import transforms
     from torchvision.utils import save_image
     from tqdm import tqdm
@@ -68,11 +68,11 @@ def run(args, images, prompts, db_images, output):
 
     if not torch.cuda.is_available():
         raise RuntimeError(
-            "DGI inference requires a CUDA GPU. Install CUDA-enabled PyTorch and check torch.cuda.is_available()."
+            "RA-DGI inference requires a CUDA GPU. Install CUDA-enabled PyTorch and check torch.cuda.is_available()."
         )
     device = "cuda"
     set_seed(args.seed)
-    solver = DGISolver(device=device)
+    solver = RADGISolver(device=device)
     for encoder in (solver.text_enc_1, solver.text_enc_2, solver.text_enc_3):
         encoder.to(device)
     with torch.no_grad():
