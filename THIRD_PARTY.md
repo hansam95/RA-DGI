@@ -2,6 +2,14 @@
 
 This release was extracted from the author's local RA-DGI research code. SD3 prompt encoding, latent scaling, dual-guidance inversion, FlowDPS sampling and the SVD measurement operators retain that implementation's calculations.
 
+## Base implementation
+
+RA-DGI is based on the official [FlowDPS](https://github.com/FlowDPS-Inverse/FlowDPS) code for *FlowDPS: Flow-Driven Posterior Sampling for Inverse Problems* (ICCV 2025), by Jeongsol Kim, Bryan Sangwoo Kim, and Jong Chul Ye. RA-DGI adds measurement-space DINOv3 retrieval and dual-guided inversion to initialize the FlowDPS reconstruction process. This attribution does not assign a new license to retained upstream code.
+
+## Paper figure and sample images
+
+`images/teaser.jpg` is rendered from the author's supplied RA-DGI teaser PDF. `samples/input/flickr_cat_000008.jpg` is copied from the AFHQ images in the author's research data; `samples/retrieval/0.jpg`, `1.jpg`, and `10.jpg` are copied from the author's retrieval image pool. These four images are included for execution examples. Image rights remain with their respective owners; no additional image license is assigned here.
+
 ## Motion kernel
 
 `functions/motionblur.py` retains the kernel-generation portion of the local `motionblur/motionblur.py`; display helpers, image application and the standalone demo are removed. The duplicate local `utils/motionblur.py` identifies the source as [LeviBorodenko/motionblur](https://github.com/LeviBorodenko/motionblur). That attribution is preserved in the released module.
