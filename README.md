@@ -113,21 +113,21 @@ results/sr/sr_avgpool_16.0/
 
 `input` is the original operator's backprojection of the noisy measurement; `label` is the preprocessed clean image. PNGs use the original `save_image(normalize=True)` convention. `config.json` maps inputs to prompts; `retrieval.json` records the selected reference for each result. Choose a new `--workdir` for each run: existing nonempty task directories are rejected to avoid mixing results.
 
-The retrieval database uses the original flattened DINO pipeline output, without feature normalization, and exact FAISS L2 nearest-neighbor search. Features are computed from degraded DB images using the same operator as the query. Cache metadata records image content hashes, selected relative paths, task, image size, noise, seed, feature-library versions, DINO device and dtype, and the actual sampled blur kernel or CS basis. Mismatched or incomplete caches are rebuilt under a new settings key. Metadata uses relative paths so the image directory can be relocated.
+The retrieval database uses the original flattened DINO pipeline output, without feature normalization, and exact FAISS L2 nearest-neighbor search. Features are computed from degraded DB images using the same operator as the query. Cache metadata records image content hashes, selected relative paths, task, image size, noise, seed, feature-library versions, DINO device and dtype, and the actual sampled blur kernel or CS basis. Metadata uses relative paths so the image directory can be relocated.
 
-RA-DGI retrieves using features of degraded reference images, as described in Section 3.2 of the paper. Each degradation therefore needs its own feature database, even when the clean retrieval images are shared. The directory names identify the task and degradation scale, image size, measurement noise, actual number of selected DB images, and seed:
+RA-DGI retrieves using features of degraded reference images, as described in Section 3.2 of the paper. Each degradation therefore needs its own feature database, even when the clean retrieval images are shared. Directory names contain only the task, degradation scale, and measurement noise:
 
 ```text
-db/measurement_dino/
-  sr_avgpool_16/size_768_noise_0.05_db_1000_seed_0/<settings-hash>/
-  deblur_motion_81/size_768_noise_0.05_db_1000_seed_0/<settings-hash>/
-  denoising_0.7/size_768_noise_0.7_db_1000_seed_0/<settings-hash>/
-  cs_blockbased_0.3/size_768_noise_0.05_db_1000_seed_0/<settings-hash>/
+db/
+  sr_avgpool_16_noise_0.05/
+  deblur_motion_81_noise_0.05/
+  denoising_0.7_noise_0.7/
+  cs_blockbased_0.3_noise_0.05/
     index.faiss
     meta.json
 ```
 
-Each `<settings-hash>` directory contains `index.faiss` and `meta.json`. The final hash distinguishes image contents, model settings, and the sampled blur kernel or CS basis, including settings whose readable labels coincide. If only three retrieval images are available, the directory says `db_3`. Repeating a run with matching settings reuses its cache; changing degradation or other feature-generation settings builds a separate cache. Earlier hash-only cache directories are ignored and rebuilt in this layout.
+Each degradation directory contains `index.faiss` and `meta.json`. Repeating a run with matching feature-generation settings loads the existing index without extracting DB features again or rewriting the cache files. Input images, prompts, and reconstruction step counts do not invalidate the DB. Image size, DB contents, seed, model settings, and the actual sampled blur kernel or CS basis are checked in `meta.json`; if any differ, or the cache is incomplete or corrupt, it is rebuilt in the same directory. Use a different `--db_dir` to keep several DB variants for the same degradation. Caches from earlier nested directory layouts must be rebuilt in this layout.
 
 DB construction preserves the inference random state. Measurements and sampling use a separate seed per input index, and each image resets the inversion scheduler shift before reconstruction sets it to 4. These fixes remove cache-hit and previous-image state dependencies; full-run PNGs are not promised to be bit-identical to historical experiments. The original RA-DGI/FlowDPS update equations, original motion backprojection (identity), DINO conversion and text-tokenization logic are retained.
 

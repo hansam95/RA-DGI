@@ -1,6 +1,5 @@
 """Measurement-space DINO features and exact FAISS L2 retrieval."""
 
-import hashlib
 import json
 import random
 from importlib.metadata import version
@@ -63,16 +62,9 @@ def make_db(args, db_images, transform, operator, device, dino):
         "candidates": candidates,
         "selected": selected,
     }
-    key = hashlib.sha256(json.dumps(manifest, sort_keys=True).encode()).hexdigest()
     # Features depend on the degradation applied to the reference images (paper Sec. 3.2).
-    # Keep settings readable; the complete manifest hash prevents accidental reuse.
-    cache = (
-        args.db_dir
-        / "measurement_dino"
-        / f"{args.task}_{args.deg_scale:g}"
-        / f"size_{args.img_size}_noise_{args.measurement_noise:g}_db_{len(selected)}_seed_{args.seed}"
-        / key
-    )
+    # Other feature-generation settings are checked in metadata, not directory names.
+    cache = args.db_dir / f"{args.task}_{args.deg_scale:g}_noise_{args.measurement_noise:g}"
     index_path, meta_path = cache / "index.faiss", cache / "meta.json"
     if index_path.is_file() and meta_path.is_file():
         try:
