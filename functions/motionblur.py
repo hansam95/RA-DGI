@@ -1,4 +1,4 @@
-"""From https://github.com/LeviBorodenko/motionblur; see THIRD_PARTY.md."""
+"""From https://github.com/LeviBorodenko/motionblur."""
 
 from math import pi
 

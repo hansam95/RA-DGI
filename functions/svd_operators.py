@@ -1,4 +1,4 @@
-"""SVD operators retained from the original RA-DGI implementation; see THIRD_PARTY.md."""
+"""SVD operators retained from the original RA-DGI implementation."""
 
 import torch
 
