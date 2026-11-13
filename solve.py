@@ -170,7 +170,7 @@ def main(argv=None):
             "sr_avgpool": 16.0,
             "deblur_motion": 81.0,
             "denoising": 0.7,
-            "cs_blockbased": 0.3,
+            "cs_blockbased": 0.1,
         }[args.task]
     try:
         validated = validate_inputs(args)

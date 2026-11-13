@@ -79,17 +79,17 @@ python solve.py --img_path samples/input --prompt "a photo of a close-up face of
 
 ### Block compressive sensing
 
-32x32 blocks with a measurement ratio of 0.3 and measurement noise of 0.05. Set `--deg_scale 0.1` for the measurement ratio reported in Section 4.1 of the paper.
+32x32 blocks with a measurement ratio of 0.1 and measurement noise of 0.05.
 
 ```bash
 python solve.py --img_path samples/input --prompt "a photo of a close-up face of a cat" \
-  --db_img_dir samples/retrieval --task cs_blockbased --deg_scale 0.3 \
+  --db_img_dir samples/retrieval --task cs_blockbased --deg_scale 0.1 \
   --measurement_noise 0.05 --efficient_memory --workdir results/cs
 ```
 
 All examples use 10 reconstruction steps, 10 inversion steps, image size 768, and CFG 2.
 
-Use `--img_path` for the input images and `--db_img_dir` for the clean retrieval images. Use `--prompt` for a shared prompt or `--prompt_file` for one prompt per image. Prompt-file lines follow the DAPE format: `0000: a cat` becomes `a high quality photo of a cat`.
+Use `--img_path` for the input images and `--db_img_dir` for the clean retrieval images. Use `--prompt` for a shared prompt or `--prompt_file` for one prompt per image.
 
 <details>
 <summary>Arguments</summary>
@@ -105,7 +105,7 @@ Use `--img_path` for the input images and `--db_img_dir` for the clean retrieval
 | `--db_dir` | `db` | Retrieval cache directory |
 | `--num_samples` | -1 | Number of inputs; -1 uses all images |
 | `--seed` | 0 | Random seed |
-| `--deg_scale` | Per task | 16, 81, 0.7, or 0.3 for the tasks above |
+| `--deg_scale` | Per task | 16, 81, 0.7, or 0.1 for the tasks above |
 | `--measurement_noise` | Per task | `deg_scale` for denoising, otherwise 0.05 |
 
 </details>
@@ -132,7 +132,7 @@ db/
   sr_avgpool_16_noise_0.05/
   deblur_motion_81_noise_0.05/
   denoising_0.7_noise_0.7/
-  cs_blockbased_0.3_noise_0.05/
+  cs_blockbased_0.1_noise_0.05/
 ```
 
 Each folder contains `index.faiss` and `meta.json`. Matching degradation and feature-generation settings reuse the existing DB; changed settings rebuild it.
